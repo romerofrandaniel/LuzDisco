@@ -1,152 +1,258 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luz Fest</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #000;
-            color: #fff;
-            text-align: center;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIS 15 - Luz Fest</title>
 
-        .section {
-            padding: 40px 20px;
-        }
+<style>
+/* === FONDO GENERAL === */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at top, #000 0%, #2a004f 100%);
+    color: #fff;
+    overflow-x: hidden;
+}
 
-        .section-background-gray {
-            background-color: #1a1a1a;
-        }
+/* 🌈 EFECTO DE LUCES GIRATORIAS EN EL FONDO */
+@keyframes lucesDisco {
+    0% { background: radial-gradient(circle at 20% 20%, #ff0080, #000); }
+    25% { background: radial-gradient(circle at 80% 30%, #00ffff, #000); }
+    50% { background: radial-gradient(circle at 50% 80%, #ffff00, #000); }
+    75% { background: radial-gradient(circle at 30% 50%, #00ff00, #000); }
+    100% { background: radial-gradient(circle at 20% 20%, #ff0080, #000); }
+}
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1;
+    animation: lucesDisco 10s infinite linear;
+    filter: blur(40px) brightness(0.6);
+}
 
-        .section-title {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
+/* === HERO === */
+.hero-section {
+    height: 90vh;
+    background: rgba(0,0,0,0.6) url('WhatsApp Image 2025-10-27 at 21.17.48.jpeg') center/cover no-repeat;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-shadow: 0 0 15px #000;
+    overflow: hidden;
+}
 
-        .section-text {
-            font-size: 18px;
-            margin: 5px 0;
-        }
+/* 🌟 ESFERA DE BOLICHE GIRATORIA */
+.disco-ball {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 80px;
+    height: 80px;
+    background: url('cb7a7fffc78c81f74038ce64ccb54c1f.gif') center/contain no-repeat;
+    filter: drop-shadow(0 0 10px #fff);
+    z-index: 3;
+}
 
-        .button {
-            display: inline-block;
-            padding: 10px 25px;
-            margin-top: 15px;
-            background: #ff1493;
-            color: white;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-        }
+/* ✨ NUEVO: GIF animado sobre la imagen principal */
+.hero-gif {
+    position: absolute;
+    bottom: 10%;
+    right: 10%;
+    width: 120px;
+    height: 120px;
+    background: url('fiesta-18322_128.gif') center/contain no-repeat;
+    opacity: 0.9;
+    z-index: 3;
+    animation: flotar 4s ease-in-out infinite;
+}
 
-        /* 🔹 Ícono del corazón reemplazado por el GIF */
-        .leaf-icon img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
+@keyframes flotar {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
 
-        /* 🔹 Carrusel de imágenes */
-        .carousel {
-            position: relative;
-            max-width: 90%;
-            margin: auto;
-            overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
+/* === CONTENIDO === */
+.hero-content {
+    text-align: center;
+    z-index: 2;
+}
+.hero-content p:first-of-type {
+    font-size: 1.3em;
+    opacity: 0.9;
+}
+.hero-content h1 {
+    font-size: 4em;
+    margin: 0;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+.hero-content p:last-of-type {
+    font-size: 1.2em;
+    margin-top: 10px;
+}
 
-        .carousel-images {
-            display: flex;
-            transition: transform 0.8s ease;
-        }
+/* === CONTADOR === */
+.hero-countdown {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 30px;
+    background: rgba(255,255,255,0.2);
+    padding: 15px 25px;
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+}
+.hero-countdown-item {
+    text-align: center;
+    min-width: 70px;
+}
+.hero-countdown-item span {
+    display: block;
+    font-size: 2em;
+    font-weight: bold;
+}
+.hero-countdown-item small {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
 
-        .carousel-images img {
-            width: 100%;
-            border-radius: 15px;
-        }
+/* === SECCIONES === */
+.section {
+    background: rgba(255,255,255,0.1);
+    margin: 40px auto;
+    padding: 30px 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+}
+.section-title {
+    font-size: 2em;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px #fff;
+}
 
-        .carousel-button {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0,0,0,0.5);
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 50%;
-        }
+/* 💖 CORAZONES REEMPLAZADOS POR GIF BRILLANTE */
+.leaf-icon img {
+    width: 60px;
+    height: 60px;
+    filter: drop-shadow(0 0 10px #ff69b4);
+}
 
-        .carousel-button.left {
-            left: 15px;
-        }
+/* === BOTONES === */
+.button {
+    display: inline-block;
+    padding: 12px 28px;
+    margin-top: 20px;
+    border: 2px solid #fff;
+    border-radius: 25px;
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+.button:hover {
+    background: #fff;
+    color: #000;
+}
 
-        .carousel-button.right {
-            right: 15px;
-        }
-    </style>
+/* === PIE === */
+.footer {
+    margin: 50px auto;
+    text-align: center;
+    color: #ddd;
+}
+.footer h2 {
+    font-style: italic;
+    font-size: 2.2em;
+    text-shadow: 0 0 10px #fff;
+}
+</style>
 </head>
 <body>
 
-    <!-- 🔊 Música al entrar -->
-    <audio autoplay loop>
-        <source src="musica.mp3" type="audio/mpeg">
-        Tu navegador no soporta audio HTML5.
-    </audio>
+<!-- 🎵 MÚSICA AUTOMÁTICA -->
+<audio id="musica" autoplay loop>
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
 
-    <div class="section">
-        <div class="leaf-icon">
-            <img src="fiesta-18322_128.gif" alt="corazón animado">
-        </div>
-        <h2 class="section-title">Dónde?</h2>
-        <p class="section-text">Salón Gauna</p>
-        <p class="section-text">Dirección: Pio XII Puerto Vilelas</p>
-        <a href="https://www.google.com/maps/place/Salon+De+Fiesta+Gauna/@-27.5091156,-58.9386445,20z/data=!4m6!3m5!1s0x9445734d6cbae71b:0x5d03134ab55ff734!8m2!3d-27.5091156!4d-58.9381709!16s%2Fg%2F11g4g_9td1" class="button">VER MAPA</a>
-    </div>
+<div class="hero-section">
+    <div class="disco-ball"></div>
 
-    <!-- 🔹 Carrusel dinámico -->
-    <div class="section section-background-gray">
-        <div class="leaf-icon">
-            <img src="fiesta-18322_128.gif" alt="corazón animado">
-        </div>
-        <h2 class="section-title">Mi álbum</h2>
+    <!-- 🎉 Nuevo GIF animado sobre la imagen -->
+    <div class="hero-gif"></div>
 
-        <div class="carousel">
-            <div class="carousel-images" id="carouselImages">
-                <img src="./WhatsApp Image 2025-10-27 at 21.17.48.jpeg" alt="Foto 1">
-                <img src="./WhatsApp Image 2025-10-27 at 21.17.48 (2).jpeg" alt="Foto 2">
-                <img src="./WhatsApp Image 2025-10-27 at 21.17.48 (1).jpeg" alt="Foto 3">
-                <img src="./WhatsApp Image 2025-10-27 at 21.17.47 (3).jpeg" alt="Foto 4">
-                <img src="./WhatsApp Image 2025-10-27 at 21.17.47 (2).jpeg" alt="Foto 5">
-                <img src="./WhatsApp Image 2025-10-27 at 21.17.47 (1).jpeg" alt="Foto 6">
-                <img src="./WhatsApp Image 2025-10-27 at 21.17.47.jpeg" alt="Foto 7">
-                <img src="./WhatsApp Image 2025-10-27 at 21.17.46.jpeg" alt="Foto 8">
-            </div>
+    <div class="hero-content">
+        <p>MIS 15</p>
+        <h1>Luz Fest</h1>
+        <p>29.11.2025</p>
 
-            <button class="carousel-button left" onclick="moveSlide(-1)">&#10094;</button>
-            <button class="carousel-button right" onclick="moveSlide(1)">&#10095;</button>
+        <div class="hero-countdown">
+            <div class="hero-countdown-item"><span id="days">00</span><small>Días</small></div>
+            <div class="hero-countdown-item"><span id="hours">00</span><small>Horas</small></div>
+            <div class="hero-countdown-item"><span id="minutes">00</span><small>Minutos</small></div>
+            <div class="hero-countdown-item"><span id="seconds">00</span><small>Segundos</small></div>
         </div>
     </div>
+</div>
 
-    <script>
-        let index = 0;
-        const images = document.querySelectorAll('#carouselImages img');
-        const total = images.length;
+<div class="section">
+    <div class="leaf-icon"><img src="https://i.gifer.com/3Z8l.gif" alt="brillo"></div>
+    <h2 class="section-title">Dónde?</h2>
+    <p>Salón Gauna</p>
+    <p>Pio XII - Puerto Vilelas</p>
+    <a href="https://www.google.com/maps/place/Salon+De+Fiesta+Gauna/" class="button">VER MAPA</a>
+</div>
 
-        function moveSlide(step) {
-            index = (index + step + total) % total;
-            document.getElementById('carouselImages').style.transform = `translateX(-${index * 100}%)`;
-        }
+<div class="section">
+    <div class="leaf-icon"><img src="https://i.gifer.com/3Z8l.gif" alt="brillo"></div>
+    <h2 class="section-title">Dress Code</h2>
+    <p>Evita usar blanco o rosa. ¡Queremos mucho color!</p>
+</div>
 
-        // Cambio automático cada 4 segundos
-        setInterval(() => moveSlide(1), 4000);
-    </script>
+<div class="section">
+    <h2 class="section-title">Confirmá tu asistencia</h2>
+    <p>🎉 Cada detalle fue pensado con ilusión.</p>
+    <a href="https://wa.me/5493624690820?text=Hola!%20Confirmo%20mi%20asistencia%20a%20Luz%20Fest!" class="button">CONFIRMAR</a>
+</div>
 
+<div class="footer">
+    <h2>¡Te espero para brillar juntos! ✨</h2>
+</div>
+
+<script>
+// === CONTADOR ===
+function actualizarCuentaRegresiva() {
+  const fechaObjetivo = new Date("November 29, 2025 21:00:00").getTime();
+  const ahora = new Date().getTime();
+  const diferencia = fechaObjetivo - ahora;
+
+  if (diferencia <= 0) {
+    document.querySelector(".hero-countdown").innerHTML = "<h3>🎉 ¡Llegó el gran día! 🎉</h3>";
+    return;
+  }
+
+  const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+  const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+  const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+  document.getElementById("days").textContent = dias.toString().padStart(2, "0");
+  document.getElementById("hours").textContent = horas.toString().padStart(2, "0");
+  document.getElementById("minutes").textContent = minutos.toString().padStart(2, "0");
+  document.getElementById("seconds").textContent = segundos.toString().padStart(2, "0");
+}
+setInterval(actualizarCuentaRegresiva, 1000);
+actualizarCuentaRegresiva();
+</script>
 </body>
 </html>
