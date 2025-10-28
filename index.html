@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIS 15 - Luz Fest</title>
+
+<style>
+/* === FONDO GENERAL === */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at top, #000 0%, #2a004f 100%);
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* 🌈 EFECTO DE LUCES GIRATORIAS EN EL FONDO */
+@keyframes lucesDisco {
+    0% { background: radial-gradient(circle at 20% 20%, #ff0080, #000); }
+    25% { background: radial-gradient(circle at 80% 30%, #00ffff, #000); }
+    50% { background: radial-gradient(circle at 50% 80%, #ffff00, #000); }
+    75% { background: radial-gradient(circle at 30% 50%, #00ff00, #000); }
+    100% { background: radial-gradient(circle at 20% 20%, #ff0080, #000); }
+}
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1;
+    animation: lucesDisco 10s infinite linear;
+    filter: blur(40px) brightness(0.6);
+}
+
+/* === HERO === */
+.hero-section {
+    height: 90vh;
+    background: rgba(0,0,0,0.6) url('WhatsApp Image 2025-10-27 at 21.17.48.jpeg') center/cover no-repeat;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-shadow: 0 0 15px #000;
+    overflow: hidden;
+}
+
+/* 🌟 ESFERA DE BOLICHE GIRATORIA */
+.disco-ball {
+    position: absolute;
+    top: 60px;
+    width: 120px;
+    height: 120px;
+    background: url('https://i.gifer.com/2GU.gif') center/cover no-repeat;
+    animation: girar 5s linear infinite;
+    filter: drop-shadow(0 0 20px #fff);
+}
+@keyframes girar {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* === CONTENIDO === */
+.hero-content {
+    text-align: center;
+    z-index: 2;
+}
+.hero-content p:first-of-type {
+    font-size: 1.3em;
+    opacity: 0.9;
+}
+.hero-content h1 {
+    font-size: 4em;
+    margin: 0;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+.hero-content p:last-of-type {
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+/* === CONTADOR === */
+.hero-countdown {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+    background: rgba(255,255,255,0.2);
+    padding: 15px 25px;
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+}
+.hero-countdown-item {
+    text-align: center;
+}
+.hero-countdown-item span {
+    display: block;
+    font-size: 2em;
+    font-weight: bold;
+}
+.hero-countdown-item small {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* === SECCIONES === */
+.section {
+    background: rgba(255,255,255,0.1);
+    margin: 40px auto;
+    padding: 30px 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+}
+.section-title {
+    font-size: 2em;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px #fff;
+}
+
+/* 💖 CORAZONES REEMPLAZADOS POR GIF BRILLANTE */
+.leaf-icon img {
+    width: 60px;
+    height: 60px;
+    filter: drop-shadow(0 0 10px #ff69b4);
+}
+
+/* === BOTONES === */
+.button {
+    display: inline-block;
+    padding: 12px 28px;
+    margin-top: 20px;
+    border: 2px solid #fff;
+    border-radius: 25px;
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+.button:hover {
+    background: #fff;
+    color: #000;
+}
+
+/* === PIE === */
+.footer {
+    margin: 50px auto;
+    text-align: center;
+    color: #ddd;
+}
+.footer h2 {
+    font-style: italic;
+    font-size: 2.2em;
+    text-shadow: 0 0 10px #fff;
+}
+</style>
+</head>
+<body>
+
+<!-- 🎵 MÚSICA AUTOMÁTICA -->
+<audio id="musica" autoplay loop>
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
+
+<div class="hero-section">
+    <div class="disco-ball"></div>
+    <div class="hero-content">
+        <p>MIS 15</p>
+        <h1>Luz Fest</h1>
+        <p>29.11.2025</p>
+
+        <div class="hero-countdown">
+            <div class="hero-countdown-item"><span id="days">00</span><small>Días</small></div>
+            <div class="hero-countdown-item"><span id="hours">00</span><small>Horas</small></div>
+            <div class="hero-countdown-item"><span id="minutes">00</span><small>Minutos</small></div>
+            <div class="hero-countdown-item"><span id="seconds">00</span><small>Segundos</small></div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="leaf-icon"><img src="https://i.gifer.com/3Z8l.gif" alt="brillo"></div>
+    <h2 class="section-title">Dónde?</h2>
+    <p>Salón Gauna</p>
+    <p>Pio XII - Puerto Vilelas</p>
+    <a href="https://www.google.com/maps/place/Salon+De+Fiesta+Gauna/" class="button">VER MAPA</a>
+</div>
+
+<div class="section">
+    <div class="leaf-icon"><img src="https://i.gifer.com/3Z8l.gif" alt="brillo"></div>
+    <h2 class="section-title">Dress Code</h2>
+    <p>Evita usar blanco o rosa. ¡Queremos mucho color!</p>
+</div>
+
+<div class="section">
+    <h2 class="section-title">Confirmá tu asistencia</h2>
+    <p>🎉 Cada detalle fue pensado con ilusión.</p>
+    <a href="https://wa.me/5493624690820?text=Hola!%20Confirmo%20mi%20asistencia%20a%20Luz%20Fest!" class="button">CONFIRMAR</a>
+</div>
+
+<div class="footer">
+    <h2>¡Te espero para brillar juntos! ✨</h2>
+</div>
+
+<script>
+// === CONTADOR ===
+function actualizarCuentaRegresiva() {
+  const fechaObjetivo = new Date("November 29, 2025 21:00:00").getTime();
+  const ahora = new Date().getTime();
+  const diferencia = fechaObjetivo - ahora;
+
+  if (diferencia <= 0) {
+    document.querySelector(".hero-countdown").innerHTML = "<h3>🎉 ¡Llegó el gran día! 🎉</h3>";
+    return;
+  }
+
+  const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+  const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+  const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+  document.getElementById("days").textContent = dias.toString().padStart(2, "0");
+  document.getElementById("hours").textContent = horas.toString().padStart(2, "0");
+  document.getElementById("minutes").textContent = minutos.toString().padStart(2, "0");
+  document.getElementById("seconds").textContent = segundos.toString().padStart(2, "0");
+}
+setInterval(actualizarCuentaRegresiva, 1000);
+actualizarCuentaRegresiva();
+</script>
+</body>
+</html>
