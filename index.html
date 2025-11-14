@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Escanear Pulsera</title>
 
-<!-- Librería del lector QR (OBLIGATORIA) -->
+<!-- Librería del lector QR -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
@@ -13,7 +13,7 @@
         margin: 0;
         padding: 0;
         height: 100vh;
-        background-image: url('./fondo.jpg'); /* tu imagen en la raíz */
+        background-image: url('./fondo.jpg'); /* tu imagen */
         background-size: cover;
         background-position: center;
         display: flex;
@@ -66,13 +66,19 @@
 
 <h1 id="numeroMesa"></h1>
 
-<audio id="audio" src="./audio.mp3"></audio>
+<!-- AUDIO EN LA RAÍZ DEL REPO -->
+<audio id="audio" src="./bienvenida.mp3"></audio>
 
 <script>
     const boton = document.getElementById("boton-scan");
     const readerDiv = document.getElementById("reader");
     const textoMesa = document.getElementById("numeroMesa");
     const audio = document.getElementById("audio");
+
+    // PREPARA EL AUDIO PARA EVITAR BLOQUEOS EN CELULARES
+    document.addEventListener("touchstart", () => {
+        audio.load();
+    }, { once: true });
 
     boton.addEventListener("click", () => {
         boton.style.display = "none";
@@ -81,20 +87,26 @@
         const html5QrCode = new Html5Qrcode("reader");
 
         html5QrCode.start(
-            { facingMode: "environment" },     // cámara trasera
+            { facingMode: "environment" }, 
             {
                 fps: 10,
                 qrbox: { width: 250, height: 250 }
             },
             qrCodeMessage => {
-                html5QrCode.stop();
-                readerDiv.style.display = "none";
 
-                textoMesa.innerText = qrCodeMessage;
-                textoMesa.style.display = "block";
-                audio.play();
+                html5QrCode.stop().then(() => {
+                    readerDiv.style.display = "none";
+
+                    textoMesa.innerText = qrCodeMessage;
+                    textoMesa.style.display = "block";
+
+                    // INTENTAR REPRODUCIR EL AUDIO
+                    audio.play().catch(err => {
+                        console.log("Error reproduciendo audio:", err);
+                    });
+                });
             },
-            error => { /* ignoramos errores */ }
+            error => {}
         );
     });
 </script>
