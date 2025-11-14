@@ -1,270 +1,103 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Scanner QR - Diagnóstico</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escanear Pulsera</title>
 
-  <!-- html5-qrcode (CDN seguro) -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
+<!-- Librería del lector QR (OBLIGATORIA) -->
+<script src="https://unpkg.com/html5-qrcode"></script>
 
-  <style>
-    body{ margin:0; font-family:Inter,system-ui,Roboto; background:#000; color:#fff; display:flex; min-height:100vh; align-items:center; justify-content:center; padding:18px; box-sizing:border-box;}
-    .card{ width:100%; max-width:720px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border-radius:14px; padding:18px; box-shadow: 0 8px 36px rgba(0,0,0,0.6);}
-    h1{ font-size:18px; margin:0 0 8px 0; color:#f6c84c; }
-    p{ margin:6px 0; font-size:14px; color:#ddd; }
-    .scan-btn{ width:100%; padding:12px 16px; border-radius:999px; background:#111; border:1px solid rgba(255,255,255,0.06); color:#fff; font-weight:700; cursor:pointer; }
-    #reader{ width:100%; height:360px; margin-top:12px; display:none; border-radius:10px; overflow:hidden; background:#000; }
-    .status{ margin-top:8px; font-size:13px; color:#ffd; }
-    .error{ color:#ff9b9b; }
-    label{ font-size:13px; display:block; margin-top:8px; color:#bbb; }
-    select{ width:100%; padding:8px; margin-top:6px; border-radius:8px; background:#0b0b0b; color:#fff; border:1px solid rgba(255,255,255,0.06); }
-    .overlayNumero{ display:none; position:fixed; inset:10% 6%; z-index:9999; background: rgba(0,0,0,0.7); border-radius:12px; padding:20px; text-align:center; }
-    .numero{ font-size: clamp(28px, 12vw, 72px); color:#f6c84c; font-weight:900; margin:0; text-shadow:0 8px 24px rgba(0,0,0,0.6); }
-    .closeSmall{ margin-top:12px; padding:8px 12px; border-radius:10px; background:#222; color:#fff; border:1px solid rgba(255,255,255,0.06); }
-    .hint{ font-size:13px; color:#cfcfcf; margin-top:6px; }
-    .log{ font-size:12px; color:#bbb; margin-top:10px; max-height:120px; overflow:auto; background: rgba(255,255,255,0.02); padding:8px; border-radius:8px; }
-  </style>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background-image: url('./fondo.jpg'); /* tu imagen en la raíz */
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        font-family: Arial, sans-serif;
+        color: white;
+        text-shadow: 0px 0px 6px black;
+    }
+
+    #boton-scan {
+        padding: 15px 30px;
+        background: rgba(0,0,0,0.7);
+        border: 2px solid white;
+        border-radius: 20px;
+        font-size: 22px;
+        color: white;
+        font-weight: bold;
+        backdrop-filter: blur(3px);
+    }
+
+    #numeroMesa {
+        margin-top: 20px;
+        font-size: 50px;
+        display: none;
+        animation: estrellas 1.2s ease-out forwards;
+    }
+
+    @keyframes estrellas {
+        0% { opacity: 0; transform: scale(0.5); }
+        50% { opacity: 1; transform: scale(1.3); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    #reader {
+        width: 90%;
+        max-width: 400px;
+        margin-top: 20px;
+        display: none;
+    }
+</style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>Scanner QR — Diagnóstico</h1>
-    <p>Subí este archivo en la raíz de tu repo y abrilo por GitHub Pages (https). Si no funciona, mirá los mensajes abajo.</p>
 
-    <button id="btnScan" class="scan-btn">SACANEAR QR</button>
+<button id="boton-scan">📷 ESCANEAR QR</button>
 
-    <div class="status" id="permStatus">Estado de permiso: <strong id="permText">desconocido</strong></div>
-    <label for="deviceSelect">Cámaras detectadas (si aparece trasera, elegila):</label>
-    <select id="deviceSelect"><option>Cargando cámaras...</option></select>
+<div id="reader"></div>
 
-    <div id="reader"></div>
+<h1 id="numeroMesa"></h1>
 
-    <div class="hint">Recomendado: abrir en Chrome (Android) o Safari (iPhone). No usar la vista previa desde la app de GitHub.</div>
-
-    <div class="log" id="log"></div>
-
-    <label>Errores comunes y soluciones rápidas:</label>
-    <ul style="color:#ddd;font-size:13px">
-      <li>Si te pide permiso repetidamente: revisá Configuración → Sitio → Cámara y permití.</li>
-      <li>Si carga la página dentro de otra (iframe) o preview de app: abrila directamente en el navegador.</li>
-      <li>Si el navegador es viejo o de fábrica, probá Chrome o Firefox.</li>
-    </ul>
-  </div>
-
-  <div class="overlayNumero" id="overlayNumero" role="dialog" aria-modal="true">
-    <div>
-      <p style="margin:0;color:#fff;opacity:.9">Número detectado</p>
-      <p class="numero" id="numeroDetected">00</p>
-      <button id="closeNumero" class="closeSmall">Aceptar</button>
-    </div>
-  </div>
-
-  <audio id="audioGood" src="bienvenida.mp3" preload="auto"></audio>
-  <audio id="audioGoodAlt" src="bienvenida1.mp3" preload="auto"></audio>
+<audio id="audio" src="./audio.mp3"></audio>
 
 <script>
-  const logEl = (t)=>{ const l=document.getElementById('log'); l.innerText = (new Date()).toLocaleTimeString()+' - '+t + '\n' + l.innerText; };
-  const permText = document.getElementById('permText');
-  const deviceSelect = document.getElementById('deviceSelect');
-  const readerDiv = document.getElementById('reader');
-  const overlayNumero = document.getElementById('overlayNumero');
-  const numeroDetected = document.getElementById('numeroDetected');
-  const audioGood = document.getElementById('audioGood');
-  const audioGoodAlt = document.getElementById('audioGoodAlt');
+    const boton = document.getElementById("boton-scan");
+    const readerDiv = document.getElementById("reader");
+    const textoMesa = document.getElementById("numeroMesa");
+    const audio = document.getElementById("audio");
 
-  let html5QrCode = null;
-  let currentDeviceId = null;
+    boton.addEventListener("click", () => {
+        boton.style.display = "none";
+        readerDiv.style.display = "block";
 
-  // mostrar estado de permisos (cuando sea posible)
-  async function checkPermissionStatus(){
-    try {
-      if (!navigator.permissions) {
-        permText.innerText = 'no soporta navigator.permissions (comprobá manualmente)';
-        logEl('navigator.permissions no disponible en este navegador.');
-        return;
-      }
-      // nota: algunos navegadores no implementan "camera", usan "microphone" o "camera" no estándar
-      const res = await navigator.permissions.query({ name: 'camera' }).catch(()=>null);
-      if (res && res.state) {
-        permText.innerText = res.state;
-        logEl('Permiso cámara: ' + res.state);
-        res.onchange = ()=>{ permText.innerText = res.state; logEl('Cambio permiso: '+res.state); };
-      } else {
-        permText.innerText = 'no disponible (preguntar al abrir cámara)';
-        logEl('permissions.query(camera) no retorna estado en este navegador.');
-      }
-    } catch(err){
-      permText.innerText = 'error leyendo permisos';
-      logEl('Error leyendo permisos: ' + err);
-    }
-  }
+        const html5QrCode = new Html5Qrcode("reader");
 
-  // listar dispositivos (cámaras)
-  async function listCameras(){
-    deviceSelect.innerHTML = '<option>Cargando cámaras...</option>';
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(d=>d.kind === 'videoinput');
-      deviceSelect.innerHTML = '';
-      if (videoDevices.length === 0) {
-        deviceSelect.innerHTML = '<option>No se detectaron cámaras</option>';
-        logEl('No devices videoinput detectados.');
-        return;
-      }
-      // preferir dispositivos con "back" o "rear" o "environment" en label
-      videoDevices.forEach((d, idx)=>{
-        const opt = document.createElement('option');
-        opt.value = d.deviceId;
-        // usar label pero puede estar vacio en https:// sites hasta que el permiso sea otorgado
-        opt.text = d.label || ('Cámara ' + (idx+1));
-        deviceSelect.appendChild(opt);
-      });
-      // intentar seleccionar la trasera si existe
-      let prefer = videoDevices.find(d => /rear|back|environment/i.test(d.label));
-      if (!prefer && videoDevices.length>1) prefer = videoDevices[videoDevices.length-1];
-      if (prefer) { deviceSelect.value = prefer.deviceId; currentDeviceId = prefer.deviceId; logEl('Preferida: ' + (prefer.label || prefer.deviceId)); }
-      else { deviceSelect.value = videoDevices[0].deviceId; currentDeviceId = videoDevices[0].deviceId; }
-    } catch(err){
-      deviceSelect.innerHTML = '<option>Error listando cámaras</option>';
-      logEl('Error enumerateDevices: '+err);
-    }
-  }
+        html5QrCode.start(
+            { facingMode: "environment" },     // cámara trasera
+            {
+                fps: 10,
+                qrbox: { width: 250, height: 250 }
+            },
+            qrCodeMessage => {
+                html5QrCode.stop();
+                readerDiv.style.display = "none";
 
-  // inicia html5-qrcode con un deviceId específico (preferred)
-  async function startScannerWithDeviceId(deviceId){
-    try {
-      if (html5QrCode) {
-        await html5QrCode.stop();
-        html5QrCode.clear();
-        html5QrCode = null;
-      }
-    } catch(e){ logEl('Error parando lector previo: '+e); }
-
-    readerDiv.style.display = 'block';
-    logEl('Iniciando lector con deviceId: ' + deviceId);
-
-    html5QrCode = new Html5Qrcode("reader", { fps: 20, rememberLastUsedCamera: true });
-
-    const constraints = { deviceId: { exact: deviceId } };
-
-    try {
-      await html5QrCode.start(
-        { deviceId: { exact: deviceId } },
-        { fps: 20, qrbox: { width: Math.min(window.innerWidth, 320) } },
-        (decodedText, decodedResult) => {
-          // parar y mostrar
-          logEl('QR detectado: ' + decodedText);
-          stopScanner();
-          // tratar resultado
-          let resultado = decodedText + '';
-          const match = resultado.match(/\d+/g);
-          let numero = match && match.length>0 ? match.join('') : resultado;
-          numeroDetected.innerText = numero;
-          overlayNumero.style.display = 'block';
-          try { if (/15Doris/i.test(resultado)) audioGoodAlt.play(); else audioGood.play(); } catch(e){ logEl('Error reproducir audio: '+e); }
-        }
-      );
-    } catch(err){
-      logEl('No se pudo iniciar html5QrCode: ' + err);
-      readerDiv.style.display = 'none';
-      // propia fallback: intentar start con facingMode environment si el deviceId falla
-      try {
-        logEl('Intentando iniciar con facingMode: environment como fallback');
-        html5QrCode = new Html5Qrcode("reader");
-        await html5QrCode.start(
-          { facingMode: "environment" },
-          { fps: 20, qrbox: { width: Math.min(window.innerWidth, 320) } },
-          (decodedText, decodedResult)=> {
-            logEl('QR detectado (facingMode): ' + decodedText);
-            stopScanner();
-            let resultado = decodedText + '';
-            const match = resultado.match(/\d+/g);
-            let numero = match && match.length>0 ? match.join('') : resultado;
-            numeroDetected.innerText = numero;
-            overlayNumero.style.display = 'block';
-            try { if (/15Doris/i.test(resultado)) audioGoodAlt.play(); else audioGood.play(); } catch(e){ logEl('Error reproducir audio: '+e); }
-          }
+                textoMesa.innerText = qrCodeMessage;
+                textoMesa.style.display = "block";
+                audio.play();
+            },
+            error => { /* ignoramos errores */ }
         );
-        readerDiv.style.display = 'block';
-      } catch(e2){
-        logEl('Fallback facingMode también falló: ' + e2);
-        alert('No se pudo acceder a la cámara. Revisá permisos, probá Chrome o verificá que la página no esté dentro de una vista previa/iframe.');
-      }
-    }
-  }
-
-  async function stopScanner(){
-    if (!html5QrCode) return;
-    try {
-      await html5QrCode.stop();
-      html5QrCode.clear();
-      html5QrCode = null;
-    } catch(e){ logEl('Error al detener: '+e); }
-    readerDiv.style.display = 'none';
-  }
-
-  // eventos
-  document.getElementById('btnScan').addEventListener('click', async ()=>{
-    // comprobar soporte
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      alert('Tu navegador no soporta getUserMedia. Probá con Chrome o Firefox.');
-      logEl('getUserMedia no soportado.');
-      return;
-    }
-    // solicito permiso y refresco lista de cámaras
-    try {
-      // pedir permiso mínimo (video) para que el label de cámaras aparezca en enumerateDevices
-      await navigator.mediaDevices.getUserMedia({ video: true }).then(s => {
-        s.getTracks().forEach(t=>t.stop());
-      }).catch(e => { throw e; });
-
-      await listCameras();
-      await checkPermissionStatus();
-
-      // si hay selección, arrancar con la seleccionada
-      const sel = deviceSelect.value;
-      if (!sel || sel.includes('Cargando') || sel.includes('No se')) {
-        logEl('No hay deviceId disponible. Intentando facingMode.');
-        await startScannerWithDeviceId(undefined); // start will try facingMode fallback inside
-      } else {
-        currentDeviceId = sel;
-        await startScannerWithDeviceId(currentDeviceId);
-      }
-    } catch(err){
-      logEl('Error solicitando permiso camara o listando dispositivos: ' + err);
-      // mensajes de ayuda rápidos según el error
-      if (err && err.name === 'NotAllowedError') {
-        alert('Permiso denegado. Habilitá la cámara en la configuración del sitio del navegador (Configuración → Sitio → Cámara).');
-      } else if (err && err.name === 'NotFoundError') {
-        alert('No se encontró cámara disponible.');
-      } else {
-        alert('Error accediendo a la cámara: ' + (err && err.message ? err.message : err));
-      }
-    }
-  });
-
-  deviceSelect.addEventListener('change', ()=> {
-    currentDeviceId = deviceSelect.value;
-    logEl('Device seleccionado: ' + currentDeviceId);
-  });
-
-  // cerrar overlay
-  document.getElementById('closeNumero').addEventListener('click', ()=> {
-    overlayNumero.style.display = 'none';
-    // dejar el lector listo para nuevo QR (sin iniciar)
-  });
-
-  // on load
-  (async ()=>{
-    logEl('Inicializando diagnostico...');
-    await checkPermissionStatus();
-    // intentar pre-listar cámaras (puede venir sin labels hasta que se otorgue permiso)
-    try { await listCameras(); } catch(e){ logEl('listCameras init error: '+e); }
-  })();
-
-  // cerrar lector si navegás afuera
-  window.addEventListener('pagehide', ()=> { stopScanner(); });
-
+    });
 </script>
+
 </body>
 </html>
