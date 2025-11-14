@@ -1,258 +1,411 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MIS 15 - Luz Fest</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Scanner QR - Pulseritas</title>
 
-<style>
-/* === FONDO GENERAL === */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: radial-gradient(circle at top, #000 0%, #2a004f 100%);
-    color: #fff;
-    overflow-x: hidden;
-}
+  <!-- html5-qrcode (CDN) -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
 
-/* 🌈 EFECTO DE LUCES GIRATORIAS EN EL FONDO */
-@keyframes lucesDisco {
-    0% { background: radial-gradient(circle at 20% 20%, #ff0080, #000); }
-    25% { background: radial-gradient(circle at 80% 30%, #00ffff, #000); }
-    50% { background: radial-gradient(circle at 50% 80%, #ffff00, #000); }
-    75% { background: radial-gradient(circle at 30% 50%, #00ff00, #000); }
-    100% { background: radial-gradient(circle at 20% 20%, #ff0080, #000); }
-}
-body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1;
-    animation: lucesDisco 10s infinite linear;
-    filter: blur(40px) brightness(0.6);
-}
+  <style>
+    :root{
+      --accent: #f6c84c;
+      --text: #111;
+      --glass: rgba(255,255,255,0.12);
+    }
 
-/* === HERO === */
-.hero-section {
-    height: 90vh;
-    background: rgba(0,0,0,0.6) url('WhatsApp Image 2025-10-27 at 21.17.48.jpeg') center/cover no-repeat;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-shadow: 0 0 15px #000;
-    overflow: hidden;
-}
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: Inter, Roboto, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      background: #000;
+      color:var(--text);
+    }
 
-/* 🌟 ESFERA DE BOLICHE GIRATORIA */
-.disco-ball {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    width: 80px;
-    height: 80px;
-    background: url('cb7a7fffc78c81f74038ce64ccb54c1f.gif') center/contain no-repeat;
-    filter: drop-shadow(0 0 10px #fff);
-    z-index: 3;
-}
+    /* Fondo completo con la imagen que pondrás en la raíz (fondo.jpg) */
+    .page {
+      min-height:100%;
+      background-image: url('fondo.jpg');
+      background-size: cover;
+      background-position: center center;
+      display:flex;
+      align-items:flex-end; /* botón al centro-bajo en móvil */
+      justify-content:center;
+      padding: 24px;
+      box-sizing:border-box;
+      position:relative;
+    }
 
-/* ✨ NUEVO: GIF animado sobre la imagen principal */
-.hero-gif {
-    position: absolute;
-    bottom: 10%;
-    right: 10%;
-    width: 120px;
-    height: 120px;
-    background: url('fiesta-18322_128.gif') center/contain no-repeat;
-    opacity: 0.9;
-    z-index: 3;
-    animation: flotar 4s ease-in-out infinite;
-}
+    /* capa oscura sutil para mejor contraste del botón */
+    .overlay {
+      position:absolute;
+      inset:0;
+      background: linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0.08));
+      pointer-events:none;
+    }
 
-@keyframes flotar {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
+    /* Botón elegante */
+    .scan-btn {
+      position:relative;
+      z-index:20;
+      pointer-events:auto;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      padding:14px 20px;
+      border-radius:999px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      color: white;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.4px;
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      width:100%;
+      max-width:420px;
+      cursor:pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+      user-select:none;
+    }
+    .scan-btn:active { transform: translateY(2px) scale(.995); }
+    .scan-btn .icon {
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(255,255,255,0.02));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+    }
 
-/* === CONTENIDO === */
-.hero-content {
-    text-align: center;
-    z-index: 2;
-}
-.hero-content p:first-of-type {
-    font-size: 1.3em;
-    opacity: 0.9;
-}
-.hero-content h1 {
-    font-size: 4em;
-    margin: 0;
-    color: #fff;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-}
-.hero-content p:last-of-type {
-    font-size: 1.2em;
-    margin-top: 10px;
-}
+    /* contenedor del lector (video) - se muestra encima cuando escanea */
+    #reader {
+      position:fixed;
+      inset:0;
+      z-index:30;
+      display:none; /* visible sólo al escanear */
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,0.75);
+      padding:12px;
+      box-sizing:border-box;
+    }
+    #reader .camera-wrap {
+      width:100%;
+      max-width:720px;
+      height:60vh;
+      max-height:880px;
+      background: #111;
+      border-radius:14px;
+      overflow:hidden;
+      position:relative;
+    }
+    .close-reader {
+      position:absolute;
+      top:12px;
+      right:12px;
+      z-index:40;
+      background:rgba(255,255,255,0.06);
+      color:white;
+      border-radius:10px;
+      padding:8px 10px;
+      font-weight:600;
+      cursor:pointer;
+    }
 
-/* === CONTADOR === */
-.hero-countdown {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 30px;
-    background: rgba(255,255,255,0.2);
-    padding: 15px 25px;
-    border-radius: 12px;
-    backdrop-filter: blur(6px);
-}
-.hero-countdown-item {
-    text-align: center;
-    min-width: 70px;
-}
-.hero-countdown-item span {
-    display: block;
-    font-size: 2em;
-    font-weight: bold;
-}
-.hero-countdown-item small {
-    font-size: 0.9em;
-    opacity: 0.8;
-}
+    /* Overlay del número escaneado */
+    .numero-overlay {
+      position:fixed;
+      left:50%;
+      top:28%;
+      transform:translate(-50%, -50%) scale(0.95);
+      z-index:40;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:14px;
+      padding:18px 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      backdrop-filter: blur(6px);
+      text-align:center;
+      min-width:60%;
+      max-width:92%;
+    }
 
-/* === SECCIONES === */
-.section {
-    background: rgba(255,255,255,0.1);
-    margin: 40px auto;
-    padding: 30px 20px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 800px;
-    text-align: center;
-    backdrop-filter: blur(8px);
-}
-.section-title {
-    font-size: 2em;
-    margin-bottom: 15px;
-    text-shadow: 0 0 10px #fff;
-}
+    .numero-overlay h1 {
+      margin:0;
+      font-size: clamp(28px, 10vw, 72px);
+      letter-spacing:4px;
+      color:var(--accent);
+      text-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 0 18px rgba(246,200,76,0.16);
+      font-weight:900;
+    }
 
-/* 💖 CORAZONES REEMPLAZADOS POR GIF BRILLANTE */
-.leaf-icon img {
-    width: 60px;
-    height: 60px;
-    filter: drop-shadow(0 0 10px #ff69b4);
-}
+    .numero-overlay p {
+      margin:0;
+      color: #fff;
+      font-weight:600;
+      opacity:0.95;
+      font-size:14px;
+    }
 
-/* === BOTONES === */
-.button {
-    display: inline-block;
-    padding: 12px 28px;
-    margin-top: 20px;
-    border: 2px solid #fff;
-    border-radius: 25px;
-    color: #fff;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-.button:hover {
-    background: #fff;
-    color: #000;
-}
+    /* Estrellitas animadas */
+    .stars {
+      position:absolute;
+      inset: unset;
+      width:100%;
+      height:100%;
+      top:0;
+      left:0;
+      pointer-events:none;
+      overflow:visible;
+    }
 
-/* === PIE === */
-.footer {
-    margin: 50px auto;
-    text-align: center;
-    color: #ddd;
-}
-.footer h2 {
-    font-style: italic;
-    font-size: 2.2em;
-    text-shadow: 0 0 10px #fff;
-}
-</style>
+    .star {
+      position:absolute;
+      font-size:14px;
+      color:var(--accent);
+      transform-origin:center;
+      opacity:0;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.45));
+      animation: starPop 1.4s ease forwards;
+    }
+
+    @keyframes starPop {
+      0% { opacity:0; transform: translate3d(0,0,0) scale(.1) rotate(0deg); }
+      30% { opacity:1; transform: translate3d(var(--dx), var(--dy),0) scale(1.2) rotate(140deg); }
+      70% { opacity:0.8; transform: translate3d(calc(var(--dx) * .6), calc(var(--dy) * .6),0) scale(.9) rotate(260deg); }
+      100% { opacity:0; transform: translate3d(calc(var(--dx) * 1), calc(var(--dy) * 1),0) scale(0) rotate(540deg); }
+    }
+
+    /* mensajes y ayuda */
+    .hint {
+      margin-top:12px;
+      color: rgba(255,255,255,0.9);
+      font-size:13px;
+      text-align:center;
+      z-index:20;
+      max-width:420px;
+    }
+
+    /* Responsive tweaks */
+    @media(min-width:900px){
+      .page { align-items:center; }
+      .scan-btn { max-width:300px; }
+      #reader .camera-wrap { height:70vh; }
+      .numero-overlay { top:40%; }
+    }
+  </style>
 </head>
 <body>
+  <div class="page">
+    <div class="overlay" aria-hidden="true"></div>
 
-<!-- 🎵 MÚSICA AUTOMÁTICA -->
-<audio id="musica" autoplay loop>
-  <source src="musica.mp3" type="audio/mpeg">
-</audio>
+    <!-- Botón principal -->
+    <button id="scanBtn" class="scan-btn" aria-label="Sacanear QR">
+      <span class="icon">📷</span>
+      <span>SACANEAR QR</span>
+    </button>
 
-<div class="hero-section">
-    <div class="disco-ball"></div>
+    <div class="hint">Tocá el botón y acercá la pulserita al rectángulo de la cámara.</div>
+  </div>
 
-    <!-- 🎉 Nuevo GIF animado sobre la imagen -->
-    <div class="hero-gif"></div>
-
-    <div class="hero-content">
-        <p>MIS 15</p>
-        <h1>Luz Fest</h1>
-        <p>29.11.2025</p>
-
-        <div class="hero-countdown">
-            <div class="hero-countdown-item"><span id="days">00</span><small>Días</small></div>
-            <div class="hero-countdown-item"><span id="hours">00</span><small>Horas</small></div>
-            <div class="hero-countdown-item"><span id="minutes">00</span><small>Minutos</small></div>
-            <div class="hero-countdown-item"><span id="seconds">00</span><small>Segundos</small></div>
-        </div>
+  <!-- lector cámara (oculto hasta iniciar) -->
+  <div id="reader" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="camera-wrap" id="cameraWrap">
+      <div id="html5qr-reader" style="width:100%;height:100%"></div>
+      <button id="closeReader" class="close-reader">Cerrar ✕</button>
     </div>
-</div>
+  </div>
 
-<div class="section">
-    <div class="leaf-icon"><img src="https://i.gifer.com/3Z8l.gif" alt="brillo"></div>
-    <h2 class="section-title">Dónde?</h2>
-    <p>Salón Gauna</p>
-    <p>Pio XII - Puerto Vilelas</p>
-    <a href="https://www.google.com/maps/place/Salon+De+Fiesta+Gauna/" class="button">VER MAPA</a>
-</div>
+  <!-- overlay del número escaneado -->
+  <div id="numeroOverlay" class="numero-overlay" role="status" aria-live="polite">
+    <div class="stars" id="starsContainer"></div>
+    <h1 id="numeroGrande">00</h1>
+    <p>Tu número de mesa</p>
+    <button id="okBtn" class="scan-btn" style="max-width:220px; padding:10px 14px;">
+      OK
+    </button>
+  </div>
 
-<div class="section">
-    <div class="leaf-icon"><img src="https://i.gifer.com/3Z8l.gif" alt="brillo"></div>
-    <h2 class="section-title">Dress Code</h2>
-    <p>Evita usar blanco o rosa. ¡Queremos mucho color!</p>
-</div>
+  <!-- audio (en la raíz: bienvenida.mp3 y bienvenida1.mp3 si querés variantes) -->
+  <audio id="audioGood" src="bienvenida.mp3" preload="auto"></audio>
+  <!-- si querés un audio alternativo por número -->
+  <audio id="audioGoodAlt" src="bienvenida1.mp3" preload="auto"></audio>
 
-<div class="section">
-    <h2 class="section-title">Confirmá tu asistencia</h2>
-    <p>🎉 Cada detalle fue pensado con ilusión.</p>
-    <a href="https://wa.me/5493624690820?text=Hola!%20Confirmo%20mi%20asistencia%20a%20Luz%20Fest!" class="button">CONFIRMAR</a>
-</div>
+  <script>
+    // Elementos
+    const scanBtn = document.getElementById('scanBtn');
+    const readerWrap = document.getElementById('reader');
+    const html5qrRegionId = "html5qr-reader";
+    const closeReader = document.getElementById('closeReader');
+    const numeroOverlay = document.getElementById('numeroOverlay');
+    const numeroGrande = document.getElementById('numeroGrande');
+    const starsContainer = document.getElementById('starsContainer');
+    const okBtn = document.getElementById('okBtn');
+    const audioGood = document.getElementById('audioGood');
+    const audioGoodAlt = document.getElementById('audioGoodAlt');
 
-<div class="footer">
-    <h2>¡Te espero para brillar juntos! ✨</h2>
-</div>
+    // Estado
+    let html5QrCode = null;
+    let isScanning = false;
 
-<script>
-// === CONTADOR ===
-function actualizarCuentaRegresiva() {
-  const fechaObjetivo = new Date("November 29, 2025 21:00:00").getTime();
-  const ahora = new Date().getTime();
-  const diferencia = fechaObjetivo - ahora;
+    function showReader() {
+      readerWrap.style.display = 'flex';
+      readerWrap.setAttribute('aria-hidden','false');
+    }
+    function hideReader() {
+      readerWrap.style.display = 'none';
+      readerWrap.setAttribute('aria-hidden','true');
+    }
+    function showNumeroOverlay(num) {
+      numeroGrande.textContent = num;
+      numeroOverlay.style.display = 'flex';
+      // crear estrellitas aleatorias
+      spawnStars();
+      // animación pequeño pop al overlay
+      numeroOverlay.animate([{ transform: 'translate(-50%,-50%) scale(.9)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1)', opacity:1 }], { duration: 450, easing: 'cubic-bezier(.2,.9,.2,1)' });
+    }
+    function hideNumeroOverlay() {
+      numeroOverlay.style.display = 'none';
+      starsContainer.innerHTML = '';
+    }
 
-  if (diferencia <= 0) {
-    document.querySelector(".hero-countdown").innerHTML = "<h3>🎉 ¡Llegó el gran día! 🎉</h3>";
-    return;
-  }
+    function spawnStars() {
+      starsContainer.innerHTML = '';
+      // generar entre 6 y 12 estrellas con posiciones y desplazamientos aleatorios
+      const n = Math.floor(Math.random() * 7) + 6;
+      for (let i=0; i<n; i++){
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.textContent = '★';
+        // posición inicial dentro del overlay
+        const left = Math.random() * 90 + 5; // %
+        const top = Math.random() * 60 + 10; // %
+        s.style.left = left + '%';
+        s.style.top = top + '%';
+        // desplazamientos personalizados via variables CSS
+        const dx = (Math.random() * 140 - 70) + 'px';
+        const dy = (Math.random() * -140 - 30) + 'px';
+        s.style.setProperty('--dx', dx);
+        s.style.setProperty('--dy', dy);
+        // different delays
+        s.style.animationDelay = (Math.random() * 0.35) + 's';
+        s.style.fontSize = (10 + Math.random()*28) + 'px';
+        starsContainer.appendChild(s);
+      }
+    }
 
-  const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
-  const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-  const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+    // iniciar escaneo con html5-qrcode
+    async function startScanner() {
+      if (isScanning) return;
+      isScanning = true;
+      showReader();
 
-  document.getElementById("days").textContent = dias.toString().padStart(2, "0");
-  document.getElementById("hours").textContent = horas.toString().padStart(2, "0");
-  document.getElementById("minutes").textContent = minutos.toString().padStart(2, "0");
-  document.getElementById("seconds").textContent = segundos.toString().padStart(2, "0");
-}
-setInterval(actualizarCuentaRegresiva, 1000);
-actualizarCuentaRegresiva();
-</script>
+      // config de la cámara y lector
+      const config = { fps: 20, qrbox: { width: Math.min(window.innerWidth, 360) } };
+
+      try {
+        html5QrCode = new Html5Qrcode(html5qrRegionId, /* verbose= */ false);
+
+        // preferimos la camara trasera
+        const constraints = { facingMode: "environment" };
+
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          config,
+          qrCodeSuccessCallback
+        );
+      } catch (err) {
+        console.error("No se pudo iniciar la cámara:", err);
+        alert("No se pudo acceder a la cámara. Verificá permisos o probá en otro navegador.");
+        stopScanner();
+      }
+    }
+
+    // cuando se detecta QR
+    function qrCodeSuccessCallback(decodedText, decodedResult) {
+      // decodedText es lo que figura en el QR. Suponemos que contiene el número de mesa (p.ej "18" o "15Doris")
+      // Parar lector
+      stopScanner();
+
+      // limpiar string y extraer el número (si viene con texto)
+      let resultado = decodedText + "";
+      // si el QR trae texto con letras y número, intentamos extraer número más grande
+      const match = resultado.match(/\d+/g);
+      let numero = resultado;
+      if (match && match.length>0) {
+        numero = match.join('');
+      }
+
+      // mostrar overlay con número y reproducir audio
+      showNumeroOverlay(numero);
+
+      // reproducir audio según número (ejemplo: si viene "15Doris" usamos audio alternativo)
+      if (/15Doris/i.test(resultado)) {
+        audioGoodAlt.play().catch(()=>{/*ignore*/});
+      } else {
+        audioGood.play().catch(()=>{/*ignore*/});
+      }
+
+      // actualizar Scan button texto
+      scanBtn.textContent = "Nuevo QR";
+    }
+
+    // parar y liberar cámara
+    async function stopScanner(){
+      if (!isScanning) return;
+      isScanning = false;
+      try {
+        if (html5QrCode) {
+          await html5QrCode.stop();
+          html5QrCode.clear();
+          html5QrCode = null;
+        }
+      } catch(e){ console.warn("Error parando html5QrCode", e); }
+      hideReader();
+    }
+
+    // eventos UI
+    scanBtn.addEventListener('click', async (e)=>{
+      // si el texto está "Nuevo QR" limpiamos overlay y reiniciamos
+      if (scanBtn.textContent.trim().toLowerCase() === "nuevo qr") {
+        hideNumeroOverlay();
+        scanBtn.textContent = "SACANEAR QR";
+        return;
+      }
+      // start
+      startScanner();
+    });
+
+    closeReader.addEventListener('click', ()=>{
+      stopScanner();
+    });
+
+    okBtn.addEventListener('click', ()=>{
+      hideNumeroOverlay();
+      // dejar el botón listo para nuevo QR
+      scanBtn.textContent = "Nuevo QR";
+    });
+
+    // si usuario cierra pestaña o navega, asegurar detener cámara
+    window.addEventListener('pagehide', ()=> { stopScanner(); });
+
+    // Accessibility: permitir Enter/Space en el botón principal
+    scanBtn.addEventListener('keydown', (ev)=>{
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); scanBtn.click(); }
+    });
+  </script>
 </body>
 </html>
