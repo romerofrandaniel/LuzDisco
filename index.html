@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Escanear Pulsera</title>
 
-<!-- Librería del lector QR -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
@@ -13,7 +12,7 @@
         margin: 0;
         padding: 0;
         height: 100vh;
-        background-image: url('./fondo.jpg'); /* tu imagen */
+        background-image: url('./fondo.jpg');
         background-size: cover;
         background-position: center;
         display: flex;
@@ -60,13 +59,12 @@
 
 <body>
 
-<button id="boton-scan">📷 ESCANEAR QR1</button>
+<button id="boton-scan">📷 ESCANEAR QR</button>
 
 <div id="reader"></div>
 
 <h1 id="numeroMesa"></h1>
 
-<!-- AUDIO EN LA RAÍZ DEL REPO -->
 <audio id="audio" src="./bienvenida.mp3"></audio>
 
 <script>
@@ -75,42 +73,54 @@
     const textoMesa = document.getElementById("numeroMesa");
     const audio = document.getElementById("audio");
 
-    // PREPARA EL AUDIO PARA EVITAR BLOQUEOS EN CELULARES
+    let html5QrCode = null;
+    let scannerActivo = false;
+
     document.addEventListener("touchstart", () => {
         audio.load();
     }, { once: true });
 
     boton.addEventListener("click", () => {
-        boton.style.display = "none";
-        readerDiv.style.display = "block";
 
-        const html5QrCode = new Html5Qrcode("reader");
+        textoMesa.style.display = "none";
+
+        // Si ya hay un lector creado, detenerlo y crear uno nuevo
+        if (scannerActivo && html5QrCode) {
+            html5QrCode.stop().catch(()=>{}).finally(() => {
+                iniciarScanner();
+            });
+        } else {
+            iniciarScanner();
+        }
+    });
+
+    function iniciarScanner() {
+        readerDiv.style.display = "block";
+        scannerActivo = true;
+
+        html5QrCode = new Html5Qrcode("reader");
 
         html5QrCode.start(
-            { facingMode: "environment" }, 
-            {
-                fps: 10,
-                qrbox: { width: 250, height: 250 }
-            },
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
             qrCodeMessage => {
 
                 html5QrCode.stop().then(() => {
+
                     readerDiv.style.display = "none";
+                    scannerActivo = false;
 
                     textoMesa.innerText = qrCodeMessage;
                     textoMesa.style.display = "block";
 
-                    // INTENTAR REPRODUCIR EL AUDIO
-                    audio.play().catch(err => {
-                        console.log("Error reproduciendo audio:", err);
-                    });
-                });
+                    audio.play().catch(err => console.log("Error audio:", err));
+
+                }).catch(err => console.log("No se pudo detener:", err));
             },
             error => {}
         );
-    });
+    }
 </script>
 
 </body>
 </html>
-
