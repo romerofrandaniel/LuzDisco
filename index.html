@@ -3,123 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escanear Pulsera</title>
-
-<script src="https://unpkg.com/html5-qrcode"></script>
+<title>Invitación</title>
 
 <style>
-    body {
-        margin: 0;
-        padding: 0;
-        height: 100vh;
-        background-image: url('./fondo.jpg');
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        font-family: Arial, sans-serif;
-        color: white;
-        text-shadow: 0px 0px 6px black;
-    }
+body {
+    margin: 0;
+    background: #e8cfd3;
+    font-family: Arial;
+    overflow-x: hidden;
+}
 
-    #boton-scan {
-        padding: 15px 30px;
-        background: rgba(0,0,0,0.7);
-        border: 2px solid white;
-        border-radius: 20px;
-        font-size: 22px;
-        color: white;
-        font-weight: bold;
-        backdrop-filter: blur(3px);
-    }
+.container {
+    max-width: 420px;
+    margin: auto;
+    padding: 10px;
+}
 
-    #numeroMesa {
-        margin-top: 20px;
-        font-size: 50px;
-        display: none;
-        animation: estrellas 1.2s ease-out forwards;
-    }
+.card {
+    width: 100%;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.15);
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.8s ease;
+}
 
-    @keyframes estrellas {
-        0% { opacity: 0; transform: scale(0.5); }
-        50% { opacity: 1; transform: scale(1.3); }
-        100% { opacity: 1; transform: scale(1); }
-    }
+.card.show {
+    transform: scale(1);
+    opacity: 1;
+}
 
-    #reader {
-        width: 90%;
-        max-width: 400px;
-        margin-top: 20px;
-        display: none;
-    }
+.contador {
+    background: #a8e6cf;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: 0.8s;
+}
+
+.contador.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#countdown {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+#playBtn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    background: gold;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+    z-index: 1000;
+}
+
+.whatsapp {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25D366;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 14px;
+}
 </style>
-</head>
 
+</head>
 <body>
 
-<button id="boton-scan">📷 ESCANEAR QR</button>
+<!-- 🎵 Música -->
+<audio id="musica" loop>
+    <source src="img/musica.mp3" type="audio/mpeg">
+</audio>
 
-<div id="reader"></div>
+<button id="playBtn">▶</button>
 
-<h1 id="numeroMesa"></h1>
+<div class="container">
 
-<audio id="audio" src="./bienvenida.mp3"></audio>
+    <img src="img/portada.jpg" class="card">
+    <img src="img/mensaje.jpg" class="card">
+
+    <div class="contador">
+        <h2>Falta para el gran día</h2>
+        <div id="countdown">Cargando...</div>
+    </div>
+
+    <img src="img/civil.jpg" class="card">
+    <img src="img/ceremonia.jpg" class="card">
+    <img src="img/fiesta.jpg" class="card">
+
+</div>
+
+<!-- WhatsApp -->
+<a href="https://wa.me/549XXXXXXXXXX" class="whatsapp" target="_blank">
+    Confirmar asistencia
+</a>
 
 <script>
-    const boton = document.getElementById("boton-scan");
-    const readerDiv = document.getElementById("reader");
-    const textoMesa = document.getElementById("numeroMesa");
-    const audio = document.getElementById("audio");
+// 🎵 Música
+const btn = document.getElementById("playBtn");
+const audio = document.getElementById("musica");
 
-    let html5QrCode = null;
-    let scannerActivo = false;
+btn.addEventListener("click", () => {
+    if (audio.paused) {
+        audio.play();
+        btn.innerHTML = "⏸";
+    } else {
+        audio.pause();
+        btn.innerHTML = "▶";
+    }
+});
 
-    document.addEventListener("touchstart", () => {
-        audio.load();
-    }, { once: true });
+// ⏳ Contador
+const fecha = new Date("May 9, 2026 21:30:00").getTime();
 
-    boton.addEventListener("click", () => {
+setInterval(() => {
+    const ahora = new Date().getTime();
+    const diferencia = fecha - ahora;
 
-        textoMesa.style.display = "none";
+    let dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+    let horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+    let segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
 
-        // Si ya hay un lector creado, detenerlo y crear uno nuevo
-        if (scannerActivo && html5QrCode) {
-            html5QrCode.stop().catch(()=>{}).finally(() => {
-                iniciarScanner();
-            });
-        } else {
-            iniciarScanner();
+    document.getElementById("countdown").innerHTML =
+        dias + "d " + horas + "h " + minutos + "m " + segundos + "s";
+}, 1000);
+
+// 🎬 Animación scroll
+const elementos = document.querySelectorAll(".card, .contador");
+
+const mostrar = () => {
+    const trigger = window.innerHeight * 0.9;
+
+    elementos.forEach(el => {
+        const top = el.getBoundingClientRect().top;
+
+        if (top < trigger) {
+            el.classList.add("show");
         }
     });
+};
 
-    function iniciarScanner() {
-        readerDiv.style.display = "block";
-        scannerActivo = true;
-
-        html5QrCode = new Html5Qrcode("reader");
-
-        html5QrCode.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            qrCodeMessage => {
-
-                html5QrCode.stop().then(() => {
-
-                    readerDiv.style.display = "none";
-                    scannerActivo = false;
-
-                    textoMesa.innerText = qrCodeMessage;
-                    textoMesa.style.display = "block";
-
-                    audio.play().catch(err => console.log("Error audio:", err));
-
-                }).catch(err => console.log("No se pudo detener:", err));
-            },
-            error => {}
-        );
-    }
+window.addEventListener("scroll", mostrar);
+window.addEventListener("load", mostrar);
 </script>
 
 </body>
