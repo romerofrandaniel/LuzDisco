@@ -8,32 +8,35 @@
 <style>
 body {
     margin: 0;
-    background: #e8cfd3;
     font-family: Arial;
+    background: linear-gradient(#f3d6db, #e8cfd3);
     overflow-x: hidden;
 }
 
+/* CONTENEDOR */
 .container {
     max-width: 420px;
     margin: auto;
     padding: 10px;
 }
 
+/* TARJETAS */
 .card {
     width: 100%;
     border-radius: 20px;
     margin-bottom: 20px;
-    box-shadow: 0px 10px 25px rgba(0,0,0,0.15);
-    transform: scale(0.95);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     opacity: 0;
-    transition: all 0.8s ease;
+    transform: translateY(40px) scale(0.95);
+    transition: all 1s ease;
 }
 
 .card.show {
-    transform: scale(1);
     opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
+/* CONTADOR */
 .contador {
     background: #a8e6cf;
     border-radius: 20px;
@@ -42,8 +45,8 @@ body {
     color: white;
     margin-bottom: 20px;
     opacity: 0;
-    transform: translateY(20px);
-    transition: 0.8s;
+    transform: translateY(40px);
+    transition: 1s;
 }
 
 .contador.show {
@@ -52,10 +55,24 @@ body {
 }
 
 #countdown {
-    font-size: 20px;
-    margin-top: 10px;
+    font-size: 22px;
+    font-weight: bold;
 }
 
+/* BOTONES */
+.btn {
+    display: block;
+    margin: 15px auto;
+    padding: 12px 20px;
+    background: linear-gradient(45deg, #a8e6cf, #7ed6c1);
+    color: white;
+    border-radius: 30px;
+    text-decoration: none;
+    text-align: center;
+    width: 70%;
+}
+
+/* MUSICA */
 #playBtn {
     position: fixed;
     top: 15px;
@@ -63,29 +80,38 @@ body {
     background: gold;
     border: none;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 18px;
+    width: 55px;
+    height: 55px;
+    font-size: 20px;
     z-index: 1000;
 }
 
+/* WHATSAPP */
 .whatsapp {
     position: fixed;
     bottom: 20px;
     right: 20px;
     background: #25D366;
     color: white;
-    padding: 12px 18px;
+    padding: 14px 20px;
     border-radius: 30px;
     text-decoration: none;
-    font-size: 14px;
+}
+
+/* PARTÍCULAS */
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
 }
 </style>
 
 </head>
 <body>
 
-<!-- 🎵 Música -->
+<canvas id="particles"></canvas>
+
 <audio id="musica" loop>
     <source src="img/musica.mp3" type="audio/mpeg">
 </audio>
@@ -94,31 +120,39 @@ body {
 
 <div class="container">
 
-    <img src="img/portada.jpg" class="card">
-    <img src="img/mensaje.jpg" class="card">
+<img src="img/portada.jpg" class="card">
+<img src="img/mensaje.jpg" class="card">
 
-    <div class="contador">
-        <h2>Falta para el gran día</h2>
-        <div id="countdown">Cargando...</div>
-    </div>
+<div class="contador">
+    <h2>Falta para el gran día</h2>
+    <div id="countdown"></div>
+</div>
 
-    <img src="img/civil.jpg" class="card">
-    <img src="img/ceremonia.jpg" class="card">
-    <img src="img/fiesta.jpg" class="card">
+<img src="img/civil.jpg" class="card">
+<a class="btn" href="https://maps.google.com/?q=Pio+XII+167+Puerto+Vilelas" target="_blank">Cómo llegar</a>
+
+<img src="img/ceremonia.jpg" class="card">
+<a class="btn" href="https://maps.google.com/?q=Santuario+Inmaculada+Concepcion+Barranqueras" target="_blank">Cómo llegar</a>
+
+<img src="img/fiesta.jpg" class="card">
+<a class="btn" href="https://maps.google.com/?q=Salon+Gauna+Puerto+Vilelas" target="_blank">Cómo llegar</a>
 
 </div>
 
-<!-- WhatsApp -->
-<a href="https://wa.me/549XXXXXXXXXX" class="whatsapp" target="_blank">
-    Confirmar asistencia
+<a href="https://wa.me/549XXXXXXXXXX?text=Confirmo%20mi%20asistencia%20a%20la%20boda" class="whatsapp">
+Confirmar
 </a>
 
 <script>
-// 🎵 Música
+// MUSICA
+document.body.addEventListener("click", () => {
+    document.getElementById("musica").play();
+}, { once: true });
+
 const btn = document.getElementById("playBtn");
 const audio = document.getElementById("musica");
 
-btn.addEventListener("click", () => {
+btn.onclick = () => {
     if (audio.paused) {
         audio.play();
         btn.innerHTML = "⏸";
@@ -126,41 +160,74 @@ btn.addEventListener("click", () => {
         audio.pause();
         btn.innerHTML = "▶";
     }
-});
+};
 
-// ⏳ Contador
+// CONTADOR
 const fecha = new Date("May 9, 2026 21:30:00").getTime();
 
 setInterval(() => {
     const ahora = new Date().getTime();
-    const diferencia = fecha - ahora;
+    const d = fecha - ahora;
 
-    let dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
-    let horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    let minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-    let segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+    let dias = Math.floor(d / (1000*60*60*24));
+    let h = Math.floor((d%(1000*60*60*24))/(1000*60*60));
+    let m = Math.floor((d%(1000*60*60))/(1000*60));
+    let s = Math.floor((d%(1000*60))/1000);
 
     document.getElementById("countdown").innerHTML =
-        dias + "d " + horas + "h " + minutos + "m " + segundos + "s";
+        `${dias}d ${h}h ${m}m ${s}s`;
 }, 1000);
 
-// 🎬 Animación scroll
-const elementos = document.querySelectorAll(".card, .contador");
+// SCROLL ANIMACION
+const els = document.querySelectorAll(".card, .contador");
 
-const mostrar = () => {
-    const trigger = window.innerHeight * 0.9;
-
-    elementos.forEach(el => {
-        const top = el.getBoundingClientRect().top;
-
-        if (top < trigger) {
+const show = () => {
+    const t = window.innerHeight * 0.85;
+    els.forEach(el => {
+        if (el.getBoundingClientRect().top < t) {
             el.classList.add("show");
         }
     });
 };
 
-window.addEventListener("scroll", mostrar);
-window.addEventListener("load", mostrar);
+window.addEventListener("scroll", show);
+window.addEventListener("load", show);
+
+// PARTÍCULAS DORADAS
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+for (let i = 0; i < 50; i++) {
+    particles.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        r: Math.random()*3,
+        d: Math.random()*2
+    });
+}
+
+function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "rgba(212,175,55,0.6)";
+
+    particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fill();
+
+        p.y += p.d;
+        if (p.y > canvas.height) p.y = 0;
+    });
+
+    requestAnimationFrame(draw);
+}
+
+draw();
 </script>
 
 </body>
