@@ -41,7 +41,31 @@ body {
     transform: translateY(0) scale(1);
 }
 
-/* ===== BOTON NIVEL DIOS ===== */
+/* ===== CONTADOR SOBRE IMAGEN ===== */
+.card-con-contador {
+    position: relative;
+}
+
+#countdown {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    padding: 10px 20px;
+    border-radius: 30px;
+
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+/* BOTON PLAY */
 #playBtn {
     position: absolute;
     bottom: 25px;
@@ -53,7 +77,6 @@ body {
     z-index: 10;
 }
 
-/* CONTENEDOR SVG */
 .play-svg {
     width: 110px;
     height: 110px;
@@ -61,40 +84,10 @@ body {
     animation: float 3s ease-in-out infinite;
 }
 
-/* EFECTO LATIDO SUAVE */
 @keyframes float {
     0% { transform: scale(1); }
     50% { transform: scale(1.07); }
     100% { transform: scale(1); }
-}
-
-/* CLICK REALISTA */
-#playBtn:active .play-svg {
-    transform: scale(0.9);
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
-}
-
-/* CONTADOR */
-.contador {
-    background: #a8e6cf;
-    border-radius: 20px;
-    padding: 20px;
-    text-align: center;
-    color: white;
-    margin-bottom: 20px;
-    opacity: 0;
-    transform: translateY(40px);
-    transition: 1s;
-}
-
-.contador.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-#countdown {
-    font-size: 22px;
-    font-weight: bold;
 }
 
 /* BOTONES */
@@ -146,11 +139,8 @@ canvas {
 <div class="portada">
     <img src="img/portada.jpg" class="card">
 
-    <!-- BOTON REALISTA SVG -->
     <button id="playBtn">
         <svg class="play-svg" viewBox="0 0 200 200">
-
-            <!-- TEXTO CURVO -->
             <defs>
                 <path id="curve" d="M 40,100 A 60,60 0 0,1 160,100" />
             </defs>
@@ -161,11 +151,6 @@ canvas {
                 </textPath>
             </text>
 
-            <!-- CIRCULO -->
-            <circle cx="100" cy="110" r="50"
-                fill="url(#grad)" />
-
-            <!-- GRADIENTE -->
             <defs>
                 <radialGradient id="grad">
                     <stop offset="0%" stop-color="#9bb8a5"/>
@@ -173,36 +158,30 @@ canvas {
                 </radialGradient>
             </defs>
 
-            <!-- BRILLO -->
-            <ellipse cx="85" cy="85" rx="25" ry="15"
-                fill="rgba(255,255,255,0.4)"/>
-
-            <!-- TRIANGULO -->
-            <polygon points="95,90 95,130 125,110"
-                fill="white"/>
+            <circle cx="100" cy="110" r="50" fill="url(#grad)" />
+            <ellipse cx="85" cy="85" rx="25" ry="15" fill="rgba(255,255,255,0.4)"/>
+            <polygon points="95,90 95,130 125,110" fill="white"/>
         </svg>
     </button>
-
 </div>
 
 <img src="img/11.jpg" class="card">
 <img src="img/Foto.jpg" class="card">
-<div class="contador">
-    <h2>Falta para el gran día</h2>
+
+<!-- 👇 IMAGEN CON CONTADOR ENCIMA -->
+<div class="card-con-contador">
+    <img src="img/2.jpg" class="card show">
     <div id="countdown"></div>
 </div>
 
-<img src="img/2.jpg" class="card">
 <a class="btn" href="https://maps.google.com/?q=Pio+XII+167+Puerto+Vilelas" target="_blank">Cómo llegar</a>
 
-
 <a class="btn" href="https://maps.google.com/?q=Santuario+Inmaculada+Concepcion+Barranqueras" target="_blank">Cómo llegar</a>
+
 <img src="img/5.jpg" class="card">
 <img src="img/4.jpg" class="card">
-
 <img src="img/6.jpg" class="card">
 <img src="img/7.jpg" class="card">
-
 <img src="img/8.jpg" class="card">  
 <img src="img/9.jpg" class="card">
 
@@ -221,11 +200,8 @@ const btn = document.getElementById("playBtn");
 const audio = document.getElementById("musica");
 
 btn.onclick = () => {
-    if (audio.paused) {
-        audio.play();
-    } else {
-        audio.pause();
-    }
+    if (audio.paused) audio.play();
+    else audio.pause();
 };
 
 // CONTADOR
@@ -245,7 +221,7 @@ setInterval(() => {
 }, 1000);
 
 // SCROLL
-const els = document.querySelectorAll(".card, .contador");
+const els = document.querySelectorAll(".card");
 
 const show = () => {
     const t = window.innerHeight * 0.85;
