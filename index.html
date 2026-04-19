@@ -20,11 +20,6 @@ body {
     padding: 10px;
 }
 
-/* PORTADA */
-.portada {
-    position: relative;
-}
-
 /* TARJETAS */
 .card {
     width: 100%;
@@ -41,31 +36,12 @@ body {
     transform: translateY(0) scale(1);
 }
 
-/* ===== CONTADOR SOBRE IMAGEN ===== */
-.card-con-contador {
+/* PORTADA */
+.portada {
     position: relative;
 }
 
-#countdown {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    
-    padding: 10px 20px;
-    border-radius: 30px;
-
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(6px);
-
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-
-    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-}
-
-/* BOTON PLAY */
+/* ===== BOTON PLAY ===== */
 #playBtn {
     position: absolute;
     bottom: 25px;
@@ -81,13 +57,74 @@ body {
     width: 110px;
     height: 110px;
     filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
-    animation: float 3s ease-in-out infinite;
+    animation: pulse 3s infinite;
 }
 
-@keyframes float {
+@keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.07); }
+    50% { transform: scale(1.08); }
     100% { transform: scale(1); }
+}
+
+/* ===== CONTADOR SOBRE IMAGEN ===== */
+.card-con-contador {
+    position: relative;
+}
+
+/* CAJA CONTADOR */
+#countdownBox {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    padding: 12px 25px;
+    border-radius: 40px;
+
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(8px);
+
+    color: white;
+    text-align: center;
+    font-weight: bold;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+
+    overflow: hidden;
+}
+
+/* TEXTO */
+#countdown {
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+/* CORAZONES */
+#hearts {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.heart {
+    position: absolute;
+    bottom: 0;
+    font-size: 14px;
+    animation: floatUp 3s linear forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-80px) scale(1.5);
+        opacity: 0;
+    }
 }
 
 /* BOTONES */
@@ -168,31 +205,21 @@ canvas {
 <img src="img/11.jpg" class="card">
 <img src="img/Foto.jpg" class="card">
 
-<!-- 👇 IMAGEN CON CONTADOR ENCIMA -->
+<!-- IMAGEN CON CONTADOR -->
 <div class="card-con-contador">
     <img src="img/2.jpg" class="card show">
-    <div id="countdown"></div>
+    
+    <div id="countdownBox">
+        <div id="countdown"></div>
+        <div id="hearts"></div>
+    </div>
 </div>
 
-<a class="btn" href="https://maps.google.com/?q=Pio+XII+167+Puerto+Vilelas" target="_blank">Cómo llegar</a>
-
-<a class="btn" href="https://maps.google.com/?q=Santuario+Inmaculada+Concepcion+Barranqueras" target="_blank">Cómo llegar</a>
-
-<img src="img/5.jpg" class="card">
-<img src="img/4.jpg" class="card">
-<img src="img/6.jpg" class="card">
-<img src="img/7.jpg" class="card">
-<img src="img/8.jpg" class="card">  
-<img src="img/9.jpg" class="card">
-
-<img src="img/RubenyLili.png" class="card">
-<a class="btn" href="https://maps.google.com/?q=Salon+Gauna+Puerto+Vilelas" target="_blank">Cómo llegar</a>
+<a class="btn" href="#">Cómo llegar</a>
 
 </div>
 
-<a href="https://wa.me/549XXXXXXXXXX?text=Confirmo%20mi%20asistencia%20a%20la%20boda" class="whatsapp">
-Confirmar
-</a>
+<a href="#" class="whatsapp">Confirmar</a>
 
 <script>
 // AUDIO
@@ -204,8 +231,8 @@ btn.onclick = () => {
     else audio.pause();
 };
 
-// CONTADOR
-const fecha = new Date("May 9, 2026 21:30:00").getTime();
+// CONTADOR FECHA CORRECTA
+const fecha = new Date("May 9, 2026 21:00:00").getTime();
 
 setInterval(() => {
     const ahora = new Date().getTime();
@@ -220,7 +247,25 @@ setInterval(() => {
         `${dias}d ${h}h ${m}m ${s}s`;
 }, 1000);
 
-// SCROLL
+// CORAZONES FLOTANDO
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "❤️";
+
+    heart.style.left = Math.random() * 100 + "%";
+    heart.style.fontSize = (12 + Math.random() * 10) + "px";
+
+    document.getElementById("hearts").appendChild(heart);
+
+    setTimeout(() => {
+        heart.remove();
+    }, 3000);
+}
+
+setInterval(createHeart, 400);
+
+// SCROLL ANIMACION
 const els = document.querySelectorAll(".card");
 
 const show = () => {
