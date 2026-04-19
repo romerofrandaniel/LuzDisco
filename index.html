@@ -117,6 +117,33 @@ canvas {
     left: 0;
     pointer-events: none;
 }
+
+.img-con-boton {
+    position: relative;
+}
+
+/* BOTON SOBRE LA IMAGEN */
+.btn-img {
+    position: absolute;
+    bottom: 20px; /* 👈 lo mueve arriba/abajo */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    width: 65%;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-img:hover {
+    transform: translateX(-50%) scale(1.05);
+}
+
+
+
+
+    
 </style>
 </head>
 
@@ -150,7 +177,23 @@ canvas {
     <img src="img/444.jpg" class="card show">
     <div id="countdown"></div>
 </div>
-    <img src="img/5.jpg" class="card">
+
+
+    
+    <div class="img-con-boton">
+    
+    <img src="img/5.jpg" class="card show">
+
+    <a href="https://maps.google.com/?q=Santuario+Inmaculada+Concepcion+Barranqueras" target="_blank">
+        <img src="img/BotonIglesia.jpg" class="btn-img">
+    </a>
+
+</div>
+
+
+
+
+    
     <img src="img/4.jpg" class="card">
     <img src="img/6.jpg" class="card">
     <img src="img/7.jpg" class="card">
