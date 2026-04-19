@@ -20,6 +20,11 @@ body {
     padding: 10px;
 }
 
+/* PORTADA */
+.portada {
+    position: relative;
+}
+
 /* TARJETAS */
 .card {
     width: 100%;
@@ -34,6 +39,40 @@ body {
 .card.show {
     opacity: 1;
     transform: translateY(0) scale(1);
+}
+
+/* BOTON PLAY PRO */
+#playBtn {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(10px);
+    color: white;
+    font-size: 32px;
+    
+    box-shadow: 
+        0 10px 25px rgba(0,0,0,0.3),
+        inset 0 0 10px rgba(255,255,255,0.3);
+    
+    cursor: pointer;
+    z-index: 10;
+
+    animation: pulse 2s infinite;
+}
+
+/* ANIMACION LATIDO */
+@keyframes pulse {
+    0% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.08); }
+    100% { transform: translateX(-50%) scale(1); }
 }
 
 /* CONTADOR */
@@ -72,20 +111,6 @@ body {
     width: 70%;
 }
 
-/* MUSICA */
-#playBtn {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    background: gold;
-    border: none;
-    border-radius: 50%;
-    width: 55px;
-    height: 55px;
-    font-size: 20px;
-    z-index: 1000;
-}
-
 /* WHATSAPP */
 .whatsapp {
     position: fixed;
@@ -116,13 +141,15 @@ canvas {
     <source src="img/MusicaLili.mp3" type="audio/mpeg">
 </audio>
 
-<button id="playBtn">▶</button>
-
 <div class="container">
 
-<img src="img/portada.jpg" class="card">
-<img src="img/1.jpg" class="card">
+<!-- PORTADA CON BOTON -->
+<div class="portada">
+    <img src="img/portada.jpg" class="card">
+    <button id="playBtn">▶</button>
+</div>
 
+<img src="img/1.jpg" class="card">
 
 <div class="contador">
     <h2>Falta para el gran día</h2>
@@ -135,36 +162,25 @@ canvas {
 <img src="img/Foto.jpg" class="card">
 <a class="btn" href="https://maps.google.com/?q=Santuario+Inmaculada+Concepcion+Barranqueras" target="_blank">Cómo llegar</a>
 
-
 <img src="img/4.jpg" class="card">
-
 <img src="img/5.jpg" class="card">
 <img src="img/6.jpg" class="card">
 <img src="img/7.jpg" class="card">
 
-    
 <img src="img/8.jpg" class="card">  
 <img src="img/9.jpg" class="card">
 
-    
 <img src="img/RubenyLili.png" class="card">
 <a class="btn" href="https://maps.google.com/?q=Salon+Gauna+Puerto+Vilelas" target="_blank">Cómo llegar</a>
 
-  
-    
 </div>
 
-    
 <a href="https://wa.me/549XXXXXXXXXX?text=Confirmo%20mi%20asistencia%20a%20la%20boda" class="whatsapp">
 Confirmar
 </a>
 
 <script>
 // MUSICA
-document.body.addEventListener("click", () => {
-    document.getElementById("musica").play();
-}, { once: true });
-
 const btn = document.getElementById("playBtn");
 const audio = document.getElementById("musica");
 
@@ -209,7 +225,7 @@ const show = () => {
 window.addEventListener("scroll", show);
 window.addEventListener("load", show);
 
-// PARTÍCULAS DORADAS
+// PARTICULAS
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 
